@@ -1,6 +1,9 @@
 # YOLO Object Detection App
 
-A real-time object detection web application built using YOLO and Streamlit. This project includes both the main detection app and a Google Colab notebook that guides you through training an object detection model on the COCO2017 dataset.
+The object recognition project aims to develop a system capable of identifying objects in real-time using machine learning algorithms. This system will enable the identification of various objects captured by a laptop's camera.
+
+![Screenshot 1](Screenshots/image1.jpeg)
+![Screenshot 2](Screenshots/image2.jpeg)
 
 ## Table of Contents
 
