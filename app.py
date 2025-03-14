@@ -49,38 +49,24 @@ def run_video_detection(conf_threshold):
 
 def run_webcam_detection(conf_threshold):
     st.subheader("Webcam Live Detection")
-    
-    # Initialize webcam run state in session state
-    if "webcam_active" not in st.session_state:
-        st.session_state.webcam_active = False
+    # Use streamlit-webrtc for client-side webcam access
+    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+    import av
 
-    # Arrange start/stop buttons side by side
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Start Webcam"):
-            st.session_state.webcam_active = True
-    with col2:
-        if st.button("Stop Webcam"):
-            st.session_state.webcam_active = False
+    class VideoTransformer(VideoTransformerBase):
+        def __init__(self):
+            # Set the confidence threshold from the current slider value
+            self.conf_threshold = conf_threshold
 
-    webcam_display = st.empty()
-    if st.session_state.webcam_active:
-        cap = cv2.VideoCapture(0)
-        st.info("Webcam is active...")
-        while st.session_state.webcam_active and cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                st.error("Failed to capture frame")
-                break
-            results = model.predict(source=frame, conf=conf_threshold, show=False)
+        def transform(self, frame):
+            img = frame.to_ndarray(format="bgr24")
+            results = model.predict(source=img, conf=self.conf_threshold, show=False)
             annotated_frame = results[0].plot()
-            webcam_display.image(annotated_frame, channels="BGR")
-            time.sleep(0.03)
-        cap.release()
-        st.success("Webcam stopped.")
+            return annotated_frame
+
+    webrtc_streamer(key="webcam", video_transformer_factory=lambda: VideoTransformer())
 
 def main():
-    # Set page configuration and style the title
     st.set_page_config(page_title="YOLO Object Detection", layout="wide")
     st.markdown(
         "<h1 style='text-align: center; color: blue;'>YOLO Object Detection App</h1>",
