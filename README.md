@@ -57,10 +57,6 @@ source venv/bin/activate
 
 Install the required Python packages:
 
-```bash
-pip install -r requirements.txt
-```
-
 Ensure you have the necessary libraries installed, such as Streamlit, OpenCV, NumPy, and ultralytics.
 
 ## Usage
