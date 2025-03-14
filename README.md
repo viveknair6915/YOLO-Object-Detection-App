@@ -98,7 +98,7 @@ The application supports three detection modes:
 ```
 YOLO-Object-Detection-App/
 ├── app.py                        # Main application file containing the Streamlit app
-├── requirements.txt              # List of Python dependencies
+├── trained_model.pt              # Model trained using Object_Detection_Model.ipynb file
 ├── Object_Detection_Model.ipynb  # Google Colab notebook for training the model
 └── README.md                     # This file
 ```
