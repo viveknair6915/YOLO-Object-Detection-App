@@ -1,4 +1,3 @@
-```markdown
 # YOLO Object Detection App
 
 A real-time object detection web application built using YOLO and Streamlit. This project includes both the main detection app and a Google Colab notebook that guides you through training an object detection model on the COCO2017 dataset.
