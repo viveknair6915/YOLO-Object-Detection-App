@@ -6,7 +6,7 @@ import time
 from ultralytics import YOLO
 
 # Load the YOLO model (adjust the path as needed)
-model = YOLO(r"C:\Users\HP\Desktop\video_inference\trained_model.pt")
+model = YOLO(r"trained_model.pt")
 
 def run_image_detection(conf_threshold):
     st.subheader("Image Detection Mode")
