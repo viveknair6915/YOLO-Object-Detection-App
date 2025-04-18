@@ -4,4 +4,3 @@ numpy
 ultralytics
 streamlit-webrtc
 av
-cv2
