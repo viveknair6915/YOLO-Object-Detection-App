@@ -4,6 +4,17 @@ import tempfile
 import time
 from ultralytics import YOLO
 
+# Defensive import for OpenCV: show a clear message if missing
+try:
+    import cv2
+except Exception as e:
+    cv2 = None
+    # If Streamlit is available, show an error in the app; otherwise raise a helpful ImportError
+    try:
+        st.error("OpenCV (cv2) is not installed. Install it with: pip install opencv-python")
+    except Exception:
+        raise ImportError("OpenCV (cv2) is not installed. Install it with: pip install opencv-python") from e
+
 # Load the YOLO model (adjust the path as needed)
 model = YOLO(r"trained_model.pt")
 
