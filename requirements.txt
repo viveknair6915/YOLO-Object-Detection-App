@@ -5,3 +5,6 @@ streamlit-webrtc
 av
 numpy
 pycocotools
+torch
+torchvision
+pillow
