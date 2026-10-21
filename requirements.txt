@@ -2,8 +2,9 @@
 streamlit>=1.30.0
 
 # Computer Vision & Deep Learning
-# Note: Use opencv-python (do not mix with opencv-python-headless to avoid conflicts)
-opencv-python>=4.8.0
+# opencv-python-headless is recommended for web & cloud deployments (e.g., Streamlit Cloud, Docker)
+# to avoid missing libGL.so.1 graphical system library errors.
+opencv-python-headless>=4.8.0
 ultralytics>=8.2.0
 torch>=2.0.0
 torchvision>=0.15.0

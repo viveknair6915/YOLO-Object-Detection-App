@@ -26,20 +26,34 @@ try:
     import cv2
 except Exception as e:
     cv2 = None
-    dependency_errors.append(
-        f"**OpenCV (`cv2`) failed to import**: `{e}`\n\n"
-        "To fix, run:\n```bash\npython -m pip install opencv-python\n```"
-    )
+    err_str = str(e)
+    if "libGL" in err_str:
+        fix_guidance = (
+            "This Linux/Cloud container is missing the system library `libGL.so.1`.\n\n"
+            "**Fix:**\n"
+            "1. If deployed on **Streamlit Community Cloud**, ensure `packages.txt` exists at repository root with:\n"
+            "   ```\n   libgl1\n   libglib2.0-0\n   ```\n"
+            "2. In `requirements.txt`, use `opencv-python-headless` instead of `opencv-python`:\n"
+            "   ```bash\n   python -m pip install opencv-python-headless\n   ```"
+        )
+    else:
+        fix_guidance = "To fix, run:\n```bash\npython -m pip install opencv-python-headless\n```"
+    dependency_errors.append(f"**OpenCV (`cv2`) failed to import**: `{e}`\n\n{fix_guidance}")
 
 # Ultralytics check
 try:
     from ultralytics import YOLO
 except Exception as e:
     YOLO = None
-    dependency_errors.append(
-        f"**Ultralytics failed to import**: `{e}`\n\n"
-        "To fix, run:\n```bash\npython -m pip install ultralytics\n```"
-    )
+    err_str = str(e)
+    if "libGL" in err_str:
+        fix_guidance = (
+            "Ultralytics failed because OpenCV cannot load `libGL.so.1`.\n"
+            "Add `packages.txt` with `libgl1` and `libglib2.0-0`, or install `opencv-python-headless`."
+        )
+    else:
+        fix_guidance = "To fix, run:\n```bash\npython -m pip install ultralytics\n```"
+    dependency_errors.append(f"**Ultralytics failed to import**: `{e}`\n\n{fix_guidance}")
 
 # WebRTC and PyAV check (used for webcam mode)
 webrtc_available = False

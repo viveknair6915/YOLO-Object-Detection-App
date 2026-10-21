@@ -181,17 +181,20 @@ Once running, open your web browser to:
 
 ## Troubleshooting & FAQ
 
-### 1. `OpenCV (cv2) is not installed`
-- **Cause:** OpenCV is missing from the active Python environment or a DLL is missing on Windows.
-- **Fix:** Run:
-  ```bash
-  python -m pip install opencv-python
-  ```
-  On Windows N editions, install the *Windows Media Feature Pack* if OpenCV fails to load `mfplat.dll`.
+### 1. `OpenCV (cv2) failed to import: libGL.so.1: cannot open shared object file`
+- **Cause:** Linux cloud platforms (such as **Streamlit Community Cloud** or Docker containers) run in minimal headless environments without GUI/OpenGL libraries installed by default.
+- **Fix:**
+  1. Add a `packages.txt` file at the root of your repository containing:
+     ```text
+     libgl1
+     libglib2.0-0
+     ```
+     Streamlit Community Cloud automatically reads `packages.txt` and installs these system packages via `apt-get`.
+  2. Use `opencv-python-headless` instead of `opencv-python` in `requirements.txt`.
 
 ### 2. `Ultralytics failed to import`
-- **Cause:** `ultralytics` package not installed or incompatible PyTorch/NumPy versions.
-- **Fix:** Run:
+- **Cause:** `ultralytics` package not installed, or failed internally when trying to import `cv2`.
+- **Fix:** Once OpenCV is installed or `packages.txt` is provided, run:
   ```bash
   python -m pip install "numpy<2" ultralytics
   ```
