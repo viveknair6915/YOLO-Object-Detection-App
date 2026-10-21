@@ -1,143 +1,221 @@
 # YOLO Object Detection App
 
-The object recognition project aims to develop a system capable of identifying objects in real-time using machine learning algorithms. This system will enable the identification of various objects captured by a laptop's camera.
+An end-to-end real-time object detection web application built with **Ultralytics YOLO (YOLO11n)** and **Streamlit**. Detect objects from images, uploaded videos, and live webcam streams with customizable confidence thresholds and side-by-side visualization.
 
 ![Screenshot 1](Screenshots/image1.jpeg)
 ![Screenshot 2](Screenshots/image2.jpeg)
 
+---
+
 ## Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-  - [Setup Virtual Environment (Optional)](#setup-virtual-environment-optional)
-  - [Install Dependencies](#install-dependencies)
-- [Usage](#usage)
-  - [Running the App](#running-the-app)
-  - [App Modes](#app-modes)
-- [Configuration](#configuration)
+- [Key Features](#key-features)
 - [Project Structure](#project-structure)
-- [Google Colab Notebook](#google-colab-notebook)
-- [Future Enhancements](#future-enhancements)
-- [Contributing](#contributing)
+- [System Requirements](#system-requirements)
+- [Quick Start Installation](#quick-start-installation)
+  - [1. Clone Repository](#1-clone-repository)
+  - [2. Create & Activate Virtual Environment](#2-create--activate-virtual-environment)
+  - [3. Install Dependencies](#3-install-dependencies)
+  - [4. Run Environment Diagnostics](#4-run-environment-diagnostics)
+  - [5. Run Automated Tests](#5-run-automated-tests)
+- [Running the App](#running-the-app)
+- [Detection Modes](#detection-modes)
+  - [Image Detection](#image-detection)
+  - [Video Detection](#video-detection)
+  - [Webcam Live Detection](#webcam-live-detection)
+- [Troubleshooting & FAQ](#troubleshooting--faq)
+- [Google Colab Training Notebook](#google-colab-training-notebook)
 - [License](#license)
+
+---
 
 ## Overview
 
-The YOLO Object Detection App integrates the YOLO model with Streamlit to offer a seamless and interactive web interface for object detection tasks. Users can upload images or videos, or use a live webcam feed to view real-time detection results with both the original input and the annotated output displayed side by side.
+The **YOLO Object Detection App** integrates Ultralytics YOLO with Streamlit to deliver high-performance visual inference in a clean, interactive dashboard. 
 
-Additionally, this repository includes a Google Colab notebook that walks you through the entire training pipeline—from performing exploratory data analysis (EDA) on the COCO2017 dataset to preprocessing, augmenting images, preparing the training dataset, and finally training the YOLO model.
+The application utilizes a fine-tuned YOLO11 Nano model (`trained_model.pt`) trained on the COCO2017 dataset covering 80 object categories (such as `person`, `car`, `traffic light`, `dog`, `laptop`, `cell phone`).
 
-## Features
+---
 
-- **Real-Time Object Detection:** Fast and accurate object detection using the YOLO model.
-- **Multiple Input Modes:** Supports image uploads, video processing, and live webcam feeds.
-- **Side-by-Side Display:** Compare the original input and detection results simultaneously.
-- **Adjustable Confidence Threshold:** Fine-tune detection sensitivity via a sidebar slider.
-- **Training Pipeline Notebook:** A comprehensive Google Colab notebook covering EDA, preprocessing, augmentation, dataset preparation, and training on the COCO2017 dataset.
+## Key Features
 
-## Installation
+- **Real-Time YOLO Inference:** Fast and lightweight detection using fine-tuned YOLO11n weights.
+- **Resource Caching:** Model weights are loaded once into GPU/CPU memory via Streamlit's `@st.cache_resource`, eliminating redundant reload delays across user interactions.
+- **Multi-Modal Input:**
+  - **Images:** Upload JPG, JPEG, or PNG files with side-by-side original and annotated comparison, object count, detailed classification breakdown table, and annotated image download button.
+  - **Videos:** Frame-by-frame processing for MP4, MOV, AVI, and MKV with progress monitoring, live playback, and a stop button.
+  - **Live Webcam:** Real-time WebRTC browser streaming supporting both local machines and remote/cloud server deployments.
+- **Reliable Resource Management:** OpenCV captures and temporary files are automatically released and unlinked using robust `try ... finally` blocks.
+- **Clear Error Diagnostics:** Actionable error reporting with exact underlying exceptions rather than swallowed tracebacks.
 
-### Setup Virtual Environment (Optional)
-
-It is recommended to use a virtual environment to manage dependencies:
-
-```bash
-# Create a virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-```
-
-### Install Dependencies
-
-Install the required Python packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-Ensure you have the necessary libraries installed, such as Streamlit, OpenCV, NumPy, and ultralytics.
-
-## Usage
-
-### Running the App
-
-To start the YOLO Object Detection App, run the following command:
-
-```bash
-streamlit run app.py
-```
-
-This command launches the Streamlit app and provides a local URL (typically [http://localhost:8501](http://localhost:8501)) to access the application in your web browser.
-
-### App Modes
-
-The application supports three detection modes:
-
-#### Image Detection
-- **Upload:** Accepts image files (jpg, jpeg, png).
-- **Display:** Shows both the original image and the detection result side by side.
-
-#### Video Detection
-- **Upload:** Accepts video files (mp4, mov, avi).
-- **Processing:** Processes the video frame by frame and displays detection results in real time.
-
-#### Webcam Detection
-- **Live Feed:** Uses your device's webcam for real-time object detection.
-- **Control:** Provides start/stop buttons to control the webcam stream.
-
-## Configuration
-
-- **Confidence Threshold:** Adjust the slider in the sidebar to set the minimum confidence level for object detection.
-- **Model Path:** Update the YOLO model path in the code if your trained model file is stored in a different location.
-- **Input Modes:** Select the desired detection mode (Image, Video, or Webcam) from the sidebar.
+---
 
 ## Project Structure
 
 ```
 YOLO-Object-Detection-App/
-├── app.py                        # Main application file containing the Streamlit app
-├── requirements.txt              # List of Python dependencies
-├── trained_model.pt              # Model trained using Object_Detection_Model.ipynb file
-├── Object_Detection_Model.ipynb  # Google Colab notebook for training the model
-└── README.md                     # This file
+├── app.py                        # Streamlit web application
+├── check_environment.py          # Environment & dependency diagnostic script
+├── test_app.py                   # Automated test suite (unit & smoke tests)
+├── requirements.txt              # Production dependency specifications
+├── trained_model.pt              # Trained YOLO11n model weights (80 COCO classes)
+├── Object_Dectection_Model.ipynb # Google Colab notebook for data prep and training
+├── Screenshots/                  # Application interface screenshots
+└── README.md                     # Documentation
 ```
 
-## Google Colab Notebook
+---
 
-The repository includes a Google Colab notebook (`Object_Detection_Model.ipynb`) that covers the complete training pipeline:
+## System Requirements
 
-- **Task 1: Performing EDA for the COCO2017 Dataset**  
-  Explore and visualize the dataset to understand its structure and distribution.
+- **Python:** Python 3.9, 3.10, or 3.11 (64-bit recommended).
+- **OS:** Windows 10/11, macOS, or Linux.
+- **Memory:** 4 GB RAM minimum (8 GB recommended for video processing).
 
-- **Task 2: Preprocessing the Images**  
-  Apply necessary preprocessing steps to prepare the images for model training.
+---
 
-- **Task 3: Augmentation of the Images**  
-  Implement data augmentation techniques to enhance the training dataset.
+## Quick Start Installation
 
-- **Task 4: Preparing the YOLO Training Dataset**  
-  Organize and convert the dataset into a format suitable for YOLO training.
+### 1. Clone Repository
 
-- **Task 5: Training the Model**  
-  Train the YOLO object detection model using the preprocessed and augmented dataset.
+```bash
+git clone https://github.com/viveknair6915/YOLO-Object-Detection-App.git
+cd YOLO-Object-Detection-App
+```
 
-## Future Enhancements
+### 2. Create & Activate Virtual Environment
 
-- Add support for additional detection models.
-- Improve the user interface with more customization options.
-- Integrate performance metrics and analytics for detection results.
-- Expand the training notebook to include hyperparameter tuning and model evaluation.
+Always use an isolated virtual environment to avoid package version conflicts:
 
-## Contributing
+**Windows (PowerShell):**
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
 
-Contributions are welcome! Please fork this repository and create a pull request with your changes. For major changes, open an issue first to discuss what you would like to modify.
+**Windows (Command Prompt):**
+```cmd
+python -m venv venv
+venv\Scripts\activate.bat
+```
+
+**macOS / Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+Use `python -m pip` to ensure installation into the active environment:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+> [!TIP]
+> **OpenCV Packaging Note:** `requirements.txt` specifies `opencv-python`. Never install both `opencv-python` and `opencv-python-headless` in the same environment, as conflicting namespace binaries can cause runtime import failures.
+
+### 4. Run Environment Diagnostics
+
+Before starting the web app, run the built-in diagnostic script to verify your setup:
+
+```bash
+python check_environment.py
+```
+
+This verifies:
+- Active Python interpreter and version
+- Clean imports of OpenCV, Ultralytics, PyTorch, Torchvision, NumPy, Pillow, Streamlit, and WebRTC
+- Validity and file size of `trained_model.pt`
+- End-to-end inference smoke tests on synthetic images and sample video frames
+
+### 5. Run Automated Tests
+
+Execute the automated test suite:
+
+```bash
+python -m unittest test_app.py
+```
+*(or run `pytest test_app.py` if pytest is installed)*
+
+---
+
+## Running the App
+
+Launch the application with:
+
+```bash
+python -m streamlit run app.py
+```
+
+Once running, open your web browser to:
+- **Local URL:** `http://localhost:8501`
+
+---
+
+## Detection Modes
+
+### Image Detection
+1. Select **Image** in the sidebar.
+2. Adjust the **Confidence Threshold** slider (default: `0.25`).
+3. Drag & drop or browse for an image (`.jpg`, `.jpeg`, `.png`).
+4. View the original image alongside the annotated result with bounding boxes and labels.
+5. Review the detection summary table or click **Download Annotated Image**.
+
+### Video Detection
+1. Select **Video** in the sidebar.
+2. Upload a video file (`.mp4`, `.mov`, `.avi`, `.mkv`).
+3. Real-time inference will process frames sequentially with a live progress bar.
+4. Click **Stop Video Processing** at any time to halt processing safely. Temporary files are automatically cleaned up.
+
+### Webcam Live Detection
+1. Select **Webcam** in the sidebar.
+2. Click **START** on the WebRTC component.
+3. Allow camera permissions when prompted by your browser.
+4. Frames are analyzed live and annotated bounding boxes are overlaid in real time.
+
+---
+
+## Troubleshooting & FAQ
+
+### 1. `OpenCV (cv2) is not installed`
+- **Cause:** OpenCV is missing from the active Python environment or a DLL is missing on Windows.
+- **Fix:** Run:
+  ```bash
+  python -m pip install opencv-python
+  ```
+  On Windows N editions, install the *Windows Media Feature Pack* if OpenCV fails to load `mfplat.dll`.
+
+### 2. `Ultralytics failed to import`
+- **Cause:** `ultralytics` package not installed or incompatible PyTorch/NumPy versions.
+- **Fix:** Run:
+  ```bash
+  python -m pip install "numpy<2" ultralytics
+  ```
+
+### 3. Model file not found
+- **Cause:** `trained_model.pt` was moved, renamed, or corrupted.
+- **Fix:** Ensure `trained_model.pt` is located in the root directory alongside `app.py`.
+
+### 4. Webcam issues in Remote / Cloud Deployments
+- **Note:** Streamlit executes on the server. If deploying to cloud hosting (e.g. Streamlit Community Cloud), the server does not have access to your local physical webcam (`cv2.VideoCapture(0)` cannot access your computer). The app uses **WebRTC** (`streamlit-webrtc`) so your browser streams video directly to the server. Ensure you access the app over **HTTPS** (or `localhost`) and grant camera access in your browser.
+
+---
+
+## Google Colab Training Notebook
+
+The repository includes `Object_Dectection_Model.ipynb` which covers:
+- **Task 1: EDA on COCO2017 Dataset** (class distribution & visualization)
+- **Task 2: Preprocessing** (resizing & normalization)
+- **Task 3: Data Augmentation**
+- **Task 4: YOLO Format Conversion** (bounding box remapping to `<class_id> <x_center> <y_center> <w> <h>`)
+- **Task 5: Model Training** (fine-tuning YOLO11n and exporting `trained_model.pt`)
+
+---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the [MIT License](LICENSE).
